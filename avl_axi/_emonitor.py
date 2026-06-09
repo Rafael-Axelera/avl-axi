@@ -7,6 +7,7 @@ import avl
 
 from ._item import SequenceItem
 from ._types import axi_resp_t
+from ._utils import get_burst_addresses
 
 
 class ExclusivityMonitor(avl.Component):
@@ -118,6 +119,12 @@ class ExclusivityMonitor(avl.Component):
 
         if item.arlock:
             self.ranges[id] = (lo, hi)
+            for i,_ in enumerate(get_burst_addresses(item.get("araddr"),  # set the rresp value to EXOKAY, since for arlock=1, every read is exclusive
+                                                 item.get("arlen", default=0),
+                                                 item.get("arsize", default=0),
+                                                 item.get("arburst", default=1)
+                                                )):
+                item.set("rresp", axi_resp_t.EXOKAY, idx=i)
 
 
 __all__ = ["ExclusivityMonitor"]

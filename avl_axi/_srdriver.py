@@ -187,6 +187,9 @@ class SubordinateReadDriver(Driver):
                 )
             else:
                 byte_offset = 0
+            
+            # Exclusive monitor
+            self.emonitor.process_read(item)
 
             for s in r_s_signals:
                 if s == "rvalid":
@@ -206,8 +209,6 @@ class SubordinateReadDriver(Driver):
                 if self.i_f.get("rready", default=1):
                     break
 
-            # Exclusive monitor
-            self.emonitor.process_read(item)
 
             item._rcnt_ += 1
             if item._rcnt_ == item.get_rlen()+1:
